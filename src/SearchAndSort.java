@@ -1,5 +1,9 @@
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Scanner;
+import java.util.ArrayList;
+
+import java.lang.reflect.Method;
 
 class Test<T, U> 
 {
@@ -13,32 +17,52 @@ public class SearchAndSort {
 	private static Scanner in;
 	/**
 	 * Program execution starts here.
+	 * @param <E>
 	 * 
 	 * @param args
 	 */
 	
-	public static void main(String[] args) {
+	public static <E> void main(String[] args) {
 		SearchAndSort foo = new SearchAndSort();
 		in = new Scanner(System.in);
+		
+		HashMap <String, Comparable<Comparable <E>>[]> map = new HashMap<>();
+		
 		
 		String whichAlgorithm = "What algorithm would you like to execute?";
 		String[] algorithms = new String[] {"bubble", "selection", "insertion", "merge", 
 				"linear", "binary", "quit"};
 		
-		foo.validateInput(algorithms, whichAlgorithm);
+		String whatData = "What type of data? (integers, strings) ";
+		String[] dataTypes = new String[] {"integers", "strings"};
 		
+		
+		
+		String alg = foo.validateInput(algorithms, whichAlgorithm);
+		
+		String data = foo.validateInput(dataTypes, whatData);
+		
+		try {
+			Method method = SearchAndSort.class.getMethod(alg, (data.equals("strings")) ? String.class : int.class);
+			System.out.println(method);
+		} catch (NoSuchMethodException | SecurityException e) {
+			System.out.println("error");
+			System.exit(-1);
+		}
 		
 	}
 	
-	public void validateInput(String[] array, String question) {
+	public String validateInput(String[] array, String question) {
+		String input = null;
 		do {
 			System.out.println(question);
-			if (!Arrays.stream(array).anyMatch(in.nextLine()::equals)) {
+			input = in.nextLine();
+			if (!Arrays.stream(array).anyMatch(input.toLowerCase()::equals)) {
 				System.out.println("Please enter a valid input.");
 			}
-		} while (!Arrays.stream(array).anyMatch(in.nextLine()::equals));
-		
-		
+		} while (!Arrays.stream(array).anyMatch(input.toLowerCase()::equals));
+		return input;
+	
 	}
 	
 	public <E extends Comparable<E>> E[] bubble(E[] array) {
@@ -84,5 +108,19 @@ public class SearchAndSort {
 			}
 		}
 		return array;
+	}
+	
+	public <E extends Comparable<E>> int linear(E[] array, E value) {
+		if (array.length == 0) return -1;
+		for (int i = 0; i < array.length; i++) {
+			if (array[i] == value) {
+				return i;
+			}
+		}
+		return -1;
+	}
+	
+	public <E extends Comparable<E>> int binary(E[] array, E value) {
+		return 0;
 	}
 }
