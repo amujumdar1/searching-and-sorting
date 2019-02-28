@@ -1,46 +1,23 @@
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
-import java.util.stream.Collectors;
-import java.util.ArrayList;
-import java.lang.reflect.Array;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 public class SearchAndSort {
 	
 	private static Scanner in;
 	/**
 	 * Program execution starts here.
-	 * @param <E>
 	 * 
 	 * @param args
-	 * @throws SecurityException 
-	 * @throws NoSuchMethodException 
 	 */
 	
-	public static <E> void main(String[] args) throws NoSuchMethodException, SecurityException {
+	public static void main(String[] args) {
 		SearchAndSort foo = new SearchAndSort();
 		in = new Scanner(System.in);
-		
-		HashMap <String, Object> stringMap = new HashMap<String, Object>();
-		HashMap <String, Object> intMap = new HashMap <String, Object>();
-		
-		/*try {
-			System.out.println(SearchAndSort.class.getMethod("square", int.class).invoke(foo, 4));
-		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}*/
-		
 		
 		String whichAlgorithm = "What algorithm would you like to execute?";
 		String[] algorithms = new String[] {"bubble", "selection", "insertion", "merge", 
 				"linear", "binary", "quit"};
-
-		
-		
 		
 		String whatData = "What type of data? (integers, strings) ";
 		String[] dataTypes = new String[] {"integers", "strings"};
@@ -51,126 +28,107 @@ public class SearchAndSort {
 		
 		String alg = foo.validateInput(algorithms, whichAlgorithm);
 		
-		if (alg == "quit") System.exit(0);
+		if (alg.equals("quit")) System.exit(0);
 		
 		
 		String data = foo.validateInput(dataTypes, whatData);
-		
 		String store = foo.validateInput(storage, howStored);
 		
 		System.out.println("Enter the data. Format: arg1,arg2,arg3...argn");
 		
 		String arrayToSplit = in.nextLine();
-		String delimiter = ","; 
 		String[] stringArray = null;
-		int[] intArray = null;
+		Integer[] intArray = null;
 		try {
-			stringArray = arrayToSplit.split(delimiter);
+			stringArray = arrayToSplit.split(",");
+			intArray = new Integer[stringArray.length];
 			
 			if (data.equals("integers")) {
-				intArray = Arrays.stream(arrayToSplit.split(",")).mapToInt(Integer::parseInt).toArray();
-				System.out.println(intArray[0] + intArray[1]);
+				for (int i = 0; i < stringArray.length; i++) {
+					intArray[i] = Integer.valueOf(i);
+				}
 			}
 			
 		}
 		catch (NumberFormatException e) {
 			System.out.println("Error");
+			System.exit(-1);
 		}
 		
-		ArrayList<String> stringList = new ArrayList<String>();
-		for (String i : stringArray) {
-			stringList.add(i);
-		}
-
+		List<String> stringList;
+		List<Integer> intList;
 		
-		ArrayList<Integer> intList = new ArrayList<Integer>();
-		for (int i : intArray) {
-			intList.add(i);
-		}
+		String stringSearch = null;
+		int intSearch = 0;
+		int value = 0;
 		
 		switch (alg) {
 			case "bubble":
-				if (data.equals("string")) foo.bubble(stringList);
-				else foo.bubble(intList);
+				if (data.equals("string")) stringArray = foo.bubble(stringArray);
+				else intArray = foo.bubble(intArray);
+				
 			case "selection":
-				if (data.equals("string")) {
-					if (store.equals("array")) foo.selection(stringArray);
-					else foo.selection(Arrays.asList(stringArray));
-				}
-				else {
-					if (store.equals("array")) foo.selection(intArray);
-					else foo.selection(intList);
-				}
+				if (data.equals("string")) stringArray = foo.selection(stringArray);
+				else intArray = foo.selection(intArray);
+				
 			case "insertion":
-				if (data.equals("string")) {
-					if (store.equals("array")) foo.insertion(stringArray);
-					else foo.insertion(Arrays.asList(stringArray));
-				}
-				else {
-					if (store.equals("array")) foo.insertion(intArray);
-					else foo.insertion(intList);
-				}
+				if (data.equals("string")) stringArray = foo.insertion(stringArray);
+				else intArray = foo.insertion(intArray);
+				
 			case "merge":
-				if (data.equals("string")) {
-					if (store.equals("array")) foo.mergesort(stringArray);
-					else foo.mergesort(Arrays.asList(stringArray));
-				}
-				else {
-					if (store.equals("array")) foo.mergesort(intArray);
-					else foo.mergesort(intList);
-				}
+				if (data.equals("string")) stringArray = foo.merge(stringArray);
+				else intArray = foo.merge(intArray);
+				
 			case "linear":
+				System.out.println("Enter the value to be searched.");
 				if (data.equals("string")) {
-					if (store.equals("array")) foo.linear(stringArray);
-					else foo.linear(Arrays.asList(stringArray));
+					stringSearch = in.nextLine();
+					value = foo.linear(stringArray, stringSearch);
+					System.out.println(value);
+					System.exit(0);
 				}
 				else {
-					if (store.equals("array")) foo.linear(intArray);
-					else foo.linear(intList);
+					try {
+						value = foo.linear(intArray, intSearch);
+					}
+					catch (NumberFormatException e) {
+						System.out.println("Invalid Parameter");
+						System.exit(-1);
+					}
 				}
-			
+			case "binary":
+				if (data.equals("string")) value = foo.binary(stringArray, stringSearch);
+				else value = foo.binary(intArray, intSearch);
 		}
 		
-		try {
-			for (int i = 0; i < algorithms.length - 1; i++) {
-				if (i < 4) {
-					stringMap.put(algorithms[i], SearchAndSort.class.getMethod(algorithms[i], 
-							(store.equals("list")) ? List.class : String[].class).invoke(foo, (store.equals("list")) ?
-									Arrays.asList(stringArray) : stringArray));
-
-					
-					intMap.put(algorithms[i], SearchAndSort.class.getMethod(algorithms[i],(store.equals("list")) 
-							? ArrayList.class : int[].class).invoke(foo, (store.equals("list")) ?
-									intList : intArray));
-				}
-				else {
-					stringMap.put(algorithms[i], SearchAndSort.class.getMethod(algorithms[i], 
-							(store.equals("list")) ? List.class : String[].class, String.class).invoke(foo, List.class, String.class));
-					
-					intMap.put(algorithms[i], SearchAndSort.class.getMethod(algorithms[i], (store.equals("list")) 
-							? List.class : String[].class, int.class).invoke(foo, int.class, int.class));
+		if (store.equals("list")) {
+			if (data.equals("string")) {
+				stringList = Arrays.asList(stringArray);
+				for (String i : stringList) {
+					System.out.print(i + ", ");
 				}
 			}
+			intList = Arrays.asList(intArray);
+			for (int i : intList) {
+				System.out.print(i + ", ");
+			}
+			
 		}
-		catch(NoSuchMethodException | IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			e.printStackTrace();
-		}
-		
-		try {
-			Object method = (data.equals("strings")) ? stringMap.get(alg) : intMap.get(alg);
-			System.out.println(method);
-		} catch (SecurityException e) {
-			System.out.println("error");
-			System.exit(-1);
+		else {
+			if (data.equals("string")) {
+				for (String i : stringArray) {
+					System.out.print(i + ", ");
+				}
+			}
+			else {
+				for (int i : intArray) {
+					System.out.print(i + ", ");
+				}
+			}
 		}
 		in.close();
 		
 	}
-	
-	/*public int square(int a) {
-		return a * a;
-	}*/
-	
 	
 	
 	public String validateInput(String[] array, String question) {
@@ -186,142 +144,20 @@ public class SearchAndSort {
 	
 	}
 	
-	// TODO: convert the E[] methods to String ArrayLists or int[] arrays
 	
-	/*public int[] bubble(int[] array) {
+	public <E extends Comparable<E>> E[] bubble(E[] array) {
 		for (int i = 0; i < array.length; i++) {
 			for (int j = 0; j < array.length - i; j++) {
-				if ((array[i] > array[i + 1])) {
-					int temp = array[i];
-					array[i + 1] = array[i];
-					array[i] = temp;
+				if ((array[i].compareTo(array[i + 1]) > 0)) {
+					E temp = array[i];
+					array[i] = array[i + 1];
+ 					array[i + 1] = temp;
 				}
 			}
 		}
 		return array;
 	}
-	public ArrayList<Integer> bubble(ArrayList<Integer> array) {
-		for (int i = 0; i < array.size(); i++) {
-			for (int j = 0; j < array.size() - i; j++) {
-				if ((array.get(i).compareTo(array.get(i + 1))) > 0) {
-					int temp = array.get(i);
-					array.set(i + 1, array.get(i));
-					array.set(i , temp);
-				}
-			}
-		}
-		return array;
-	}
-	public String[] bubble(String[] array) {
-		for (int i = 0; i < array.length; i++) {
-			for (int j = 0; j < array.length - i; j++) {
-				if ((array[i].compareTo(array[i + 1])) < 0) {
-					String temp = array[i];
-					array[i + 1] = array[i];
-					array[i] = temp;
-				}
-			}
-		}
-		return array;
-	}
-	
-	public List<String> bubble(List<String> array) {
-		for (int i = 0; i < array.size(); i++) {
-			for (int j = 0; j < array.size() - i; j++) {
-				if ((array.get(i).compareTo(array.get(i + 1))) > 0) {
-					String temp = array.get(i);
-					array.set(i + 1, array.get(i));
-					array.set(i , temp);
-				}
-			}
-		}
-		return array;
-	}*/
-	public <E extends Comparable<E>> List<E> bubble(List<E> array) {
-		for (int i = 0; i < array.size(); i++) {
-			for (int j = 0; j < array.size() - i; j++) {
-				if ((array.get(i).compareTo(array.get(i + 1)) > 0)) {
-					E temp = array.get(i);
-					array.set(i + 1 , array.get(i));
-					array.set(i, temp);
-				}
-			}
-		}
-		return array;
-	}
-	
-	public int[] selection(int[] array) {
-		for (int i = 0; i < array.length - 1; i++) {
-			int index = i;
-			int min = array[i];
-			for (int j = i + 1; j < array.length; j++) {
-				if (array[j] > min) {
-					min = array[j];
-					index = j;
-				}
-			}
-			int temp = array[i];
-			array[i] = array[index];
-			array[index] = temp;
-		}
-		
-		return array;
-	}
-	
-	public ArrayList<Integer> selection(ArrayList<Integer> array) {
-		for (int i = 0; i < array.size() - 1; i++) {
-			int index = i;
-			int min = array.get(i);
-			for (int j = i + 1; j < array.size(); j++) {
-				if (array.get(i).compareTo(min) < 0) {
-					min = array.get(j);
-					index = j;
-				}
-			}
-			int temp = array.get(i);
-			array.set(i, array.get(index));
-			array.set(index, temp);
-		}
-		
-		return array;
-	}
-	public String[] selection(String[] array) {
-		for (int i = 0; i < array.length - 1; i++) {
-			int index = i;
-			String min = array[i];
-			for (int j = i + 1; j < array.length; j++) {
-				if (array[j] > min) {
-					min = array[j];
-					index = j;
-				}
-			}
-			String temp = array[i];
-			array[i] = array[index];
-			array[index] = temp;
-		}
-		
-		return array;
-	}
-	
-	public List<String> selection(List<String> array) {
-		for (int i = 0; i < array.size() - 1; i++) {
-			int index = i;
-			String min = array.get(i);
-			for (int j = i + 1; j < array.size(); j++) {
-				if (array.get(i).compareTo(min) < 0) {
-					min = array.get(j);
-					index = j;
-				}
-			}
-			String temp = array.get(i);
-			array.set(i, array.get(index));
-			array.set(index, temp);
-		}
-		
-		return array;
-	}
-
-	/*public <E extends Comparable<E>> E[] selection(E[] array) {
+	public <E extends Comparable<E>> E[] selection(E[] array) {
 		for (int i = 0; i < array.length - 1; i++) {
 			int index = i;
 			E min = array[i];
@@ -331,43 +167,17 @@ public class SearchAndSort {
 					index = j;
 				}
 			}
-			E temp = array[index];
+			E temp = array[i];
 			array[i] = array[index];
 			array[index] = temp;
 		}
 		
 		return array;
-	}*/
-	public int[] insertion(int[] array) {
+	}
+	public <E extends Comparable<E>> E[] insertion(E[] array) {
 		for (int i = 0; i < array.length; i++) {
 			for (int j = i + 1; j > 0; j--) {
-				if (array[j] > (array[i])) {
-					int temp = array[j];
-					array[i] = array[j];
-					array[j] = temp;
-				}
-				else break;
-			}
-		}
-		return array;
-	}
-	public List<String>insertion(List<String> array) {
-		for (int i = 0; i < array.size(); i++) {
-			for (int j = i + 1; j > 0; j--) {
-				if (array.get(j).compareTo(array.get(i)) > 0) {
-					String temp = array.get(j);
-					array.set(i, array.get(j));
-					array.set(j, temp);
-				}
-				else break;
-			}
-		}
-		return array;
-	}
-	/*public <E extends Comparable<E>> E[] insertion(E[] array) {
-		for (int i = 0; i < array.length; i++) {
-			for (int j = i + 1; j > 0; j--) {
-				if (array[j].compareTo(array[i]) > 0) {
+				if (array[j].compareTo((array[i])) < 0) {
 					E temp = array[j];
 					array[i] = array[j];
 					array[j] = temp;
@@ -376,43 +186,23 @@ public class SearchAndSort {
 			}
 		}
 		return array;
-	}*/
+	}
 	
-	public int[] mergesort(int[] array) {
+	public <E extends Comparable<E>> E[] merge(E[] array) {
 		return array;
 	}
 	
-	public List<String> mergesort(List<String> array){
-		return array;
-	}
-	
-	public int linear(int[] array, int value) {
+	public <E extends Comparable<E>> int linear(E[] array, E value) {
 		if (array.length == 0) return -1;
 		for (int i = 0; i < array.length; i++) {
-			if (array[i] == value) {
+			if (array[i].compareTo(value) == 0) {
 				return i;
 			}
 		}
 		return -1;
 	}
-	
-	public int linear(List<String> array, String value) {
-		if (array.size() == 0) return -1;
-		for (int i = 0; i < array.size(); i++) {
-			if (array.get(i).equals(value)) {
-				return i;
-			}
-		}
-		return -1;
-	}
-	
-	public int[] binary(List<String> array, String value) {
-		mergesort(array);
-		return new int[] {0};
-	}
-	
-	public  int binary(int[] array, int value) {
-		mergesort(array);
+	public <E extends Comparable<E>> int binary(E[] array, E value) {
+		merge(array);
 		return 0;
 	}
 }
