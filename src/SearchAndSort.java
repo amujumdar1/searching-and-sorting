@@ -11,10 +11,6 @@ public class SearchAndSort {
 	 * @param args
 	 */
 	
-	enum Algorithms {
-		bubble, selection, insertion, merge, linear, binary, quit
-	}
-	
 	public static void main(String[] args) {
 		SearchAndSort foo = new SearchAndSort();
 		in = new Scanner(System.in);
